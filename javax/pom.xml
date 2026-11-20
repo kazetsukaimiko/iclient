@@ -109,6 +109,14 @@
                       </tokenfilter>
                     </filterchain>
                   </copy>
+                  <copy todir="${project.build.directory}/test-classes" overwrite="true">
+                    <fileset dir="${jakarta.module}/src/test/resources" includes="META-INF/services/**" erroronmissingdir="false"/>
+                    <filterchain>
+                      <tokenfilter>
+                        <replaceregex pattern="\bjakarta\b" replace="javax" flags="g"/>
+                      </tokenfilter>
+                    </filterchain>
+                  </copy>
                 </target>
               </configuration>
             </execution>
