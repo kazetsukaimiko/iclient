@@ -1,0 +1,167 @@
+<?xml version="1.0" ?>
+<project xmlns="http://maven.apache.org/POM/4.0.0">
+  <modelVersion>4.0.0</modelVersion>
+  <parent>
+    <groupId>io.freedriver.iclient</groupId>
+    <artifactId>iclient-parent</artifactId>
+    <version>0.1.0-SNAPSHOT</version>
+  </parent>
+  <artifactId>iclient-javax-parent</artifactId>
+  <packaging>pom</packaging>
+  <modules>
+    <module>iclient-javax-bom</module>
+    <module>iclient-cdi-javax</module>
+  </modules>
+  <properties>
+    <cdi.version>2.0.SP1</cdi.version>
+    <weld.version>3.1.9.Final</weld.version>
+  </properties>
+  <dependencyManagement>
+    <dependencies>
+      <dependency>
+        <groupId>javax.enterprise</groupId>
+        <artifactId>cdi-api</artifactId>
+        <version>${cdi.version}</version>
+        <scope>provided</scope>
+      </dependency>
+      <dependency>
+        <groupId>org.jboss.weld.se</groupId>
+        <artifactId>weld-se-core</artifactId>
+        <version>${weld.version}</version>
+        <scope>test</scope>
+      </dependency>
+    </dependencies>
+  </dependencyManagement>
+  <build>
+    <pluginManagement>
+      <plugins>
+        <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-antrun-plugin</artifactId>
+          <version>3.1.0</version>
+          <executions>
+            <execution>
+              <id>generate-namespace</id>
+              <phase>generate-sources</phase>
+              <goals>
+                <goal>run</goal>
+              </goals>
+              <configuration>
+                <target>
+                  <copy todir="${project.build.directory}/generated-sources/namespace" overwrite="true">
+                    <fileset dir="${jakarta.module}/src/main/java" includes="**/*.java" excludes="module-info.java"/>
+                    <filterchain>
+                      <tokenfilter>
+                        <replaceregex pattern="\bjakarta\b" replace="javax" flags="g"/>
+                      </tokenfilter>
+                    </filterchain>
+                  </copy>
+                  <copy todir="${project.build.directory}/generated-resources/namespace" overwrite="true">
+                    <fileset dir="${jakarta.module}/src/main/resources" includes="META-INF/services/**"/>
+                    <filterchain>
+                      <tokenfilter>
+                        <replaceregex pattern="\bjakarta\b" replace="javax" flags="g"/>
+                      </tokenfilter>
+                    </filterchain>
+                  </copy>
+                </target>
+              </configuration>
+            </execution>
+            <execution>
+              <id>generate-test-namespace</id>
+              <phase>generate-test-sources</phase>
+              <goals>
+                <goal>run</goal>
+              </goals>
+              <configuration>
+                <target>
+                  <copy todir="${project.build.directory}/generated-test-sources/namespace" overwrite="true">
+                    <fileset dir="${jakarta.module}/src/test/java" includes="**/*.java"/>
+                    <filterchain>
+                      <tokenfilter>
+                        <replaceregex pattern="\bjakarta\b" replace="javax" flags="g"/>
+                      </tokenfilter>
+                    </filterchain>
+                  </copy>
+                </target>
+              </configuration>
+            </execution>
+            <execution>
+              <id>check-generated-namespace</id>
+              <phase>test</phase>
+              <goals>
+                <goal>run</goal>
+              </goals>
+              <configuration>
+                <target>
+                  <resourcecount property="namespace.leaks">
+                    <restrict>
+                      <resources>
+                        <fileset dir="${project.build.directory}/generated-sources/namespace" includes="**/*.java"/>
+                        <fileset dir="${project.build.directory}/generated-test-sources/namespace" includes="**/*.java"/>
+                        <fileset dir="${project.build.directory}/generated-resources/namespace" includes="META-INF/services/**"/>
+                      </resources>
+                      <contains text="jakarta"/>
+                    </restrict>
+                  </resourcecount>
+                  <fail message="Generated sources or services contain jakarta">
+                    <condition>
+                      <not>
+                        <equals arg1="${namespace.leaks}" arg2="0"/>
+                      </not>
+                    </condition>
+                  </fail>
+                </target>
+              </configuration>
+            </execution>
+          </executions>
+        </plugin>
+        <plugin>
+          <groupId>org.codehaus.mojo</groupId>
+          <artifactId>build-helper-maven-plugin</artifactId>
+          <version>3.6.1</version>
+          <executions>
+            <execution>
+              <id>add-namespace</id>
+              <phase>generate-sources</phase>
+              <goals>
+                <goal>add-source</goal>
+              </goals>
+              <configuration>
+                <sources>
+                  <source>${project.build.directory}/generated-sources/namespace</source>
+                </sources>
+              </configuration>
+            </execution>
+            <execution>
+              <id>add-test-namespace</id>
+              <phase>generate-test-sources</phase>
+              <goals>
+                <goal>add-test-source</goal>
+              </goals>
+              <configuration>
+                <sources>
+                  <source>${project.build.directory}/generated-test-sources/namespace</source>
+                </sources>
+              </configuration>
+            </execution>
+            <execution>
+              <id>add-services</id>
+              <phase>generate-resources</phase>
+              <goals>
+                <goal>add-resource</goal>
+              </goals>
+              <configuration>
+                <resources>
+                  <resource>
+                    <directory>${project.build.directory}/generated-resources/namespace</directory>
+                  </resource>
+                </resources>
+              </configuration>
+            </execution>
+          </executions>
+        </plugin>
+      </plugins>
+    </pluginManagement>
+  </build>
+</project>
