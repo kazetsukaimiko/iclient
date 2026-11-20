@@ -4,7 +4,7 @@ import io.freedriver.iclient.api.exception.IClientConstructionException;
 /**
  * Builds thread-safe proxies that retain only construction inputs and hold no mutable state.
  * The target must be an interface. Before resolution, expand each supplied modifier once
- * with {@link IClientModifier#upgrade()} and pass the flattened list to factories and delegators.
+ * with {@link IClientModifier#upgrade()} and pass the flattened list to factories and layers.
  * Resolve every abstract method, including inherited methods, during construction.
  * Throw {@link IClientConstructionException} for a non-interface or a missing handler,
  * naming the unresolved method in the latter case.
