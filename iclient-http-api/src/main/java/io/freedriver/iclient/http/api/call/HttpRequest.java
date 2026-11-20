@@ -10,4 +10,7 @@ public interface HttpRequest {
 
     /** Returns headers with case-insensitive name lookup. */
     Map<String, List<String>> headers();
+
+    /** The body stream source, empty when absent. */
+    HttpBody body();
 }

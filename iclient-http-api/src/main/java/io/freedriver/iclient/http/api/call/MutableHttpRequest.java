@@ -8,6 +8,7 @@ import java.util.Map;
 public final class MutableHttpRequest implements HttpRequest {
     private String method;
     private URI uri;
+    private HttpBody body = HttpBody.empty();
     private final Map<String, List<String>> headers = Headers.mutable();
 
     @Override
@@ -37,6 +38,15 @@ public final class MutableHttpRequest implements HttpRequest {
         var copy = Headers.snapshot(headers);
         this.headers.clear();
         this.headers.putAll(copy);
+    }
+
+    @Override
+    public HttpBody body() {
+        return body;
+    }
+
+    public void setBody(HttpBody body) {
+        this.body = body == null ? HttpBody.empty() : body;
     }
 
     public ImmutableHttpRequest toImmutable() {

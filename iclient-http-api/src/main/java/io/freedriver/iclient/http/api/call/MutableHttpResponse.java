@@ -6,6 +6,7 @@ import java.util.Map;
 /** Per-call builder. Its live header map is mutable and is not thread-safe. */
 public final class MutableHttpResponse implements HttpResponse {
     private int statusCode;
+    private HttpBody body = HttpBody.empty();
     private final Map<String, List<String>> headers = Headers.mutable();
 
     @Override
@@ -26,6 +27,15 @@ public final class MutableHttpResponse implements HttpResponse {
         var copy = Headers.snapshot(headers);
         this.headers.clear();
         this.headers.putAll(copy);
+    }
+
+    @Override
+    public HttpBody body() {
+        return body;
+    }
+
+    public void setBody(HttpBody body) {
+        this.body = body == null ? HttpBody.empty() : body;
     }
 
     public ImmutableHttpResponse toImmutable() {
