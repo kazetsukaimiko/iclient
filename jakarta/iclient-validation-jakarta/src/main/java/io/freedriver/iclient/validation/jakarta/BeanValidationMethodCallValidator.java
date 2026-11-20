@@ -3,7 +3,6 @@ package io.freedriver.iclient.validation.jakarta;
 import io.freedriver.iclient.validation.api.MethodCallValidator;
 import io.freedriver.iclient.validation.api.Violation;
 import jakarta.validation.Valid;
-import jakarta.validation.Validation;
 import jakarta.validation.Validator;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
@@ -14,7 +13,7 @@ public final class BeanValidationMethodCallValidator implements MethodCallValida
     private final BeanValidationObjectValidator objects;
 
     public BeanValidationMethodCallValidator() {
-        this(Validation.buildDefaultValidatorFactory().getValidator());
+        this(DefaultValidator.INSTANCE);
     }
 
     public BeanValidationMethodCallValidator(Validator validator) {

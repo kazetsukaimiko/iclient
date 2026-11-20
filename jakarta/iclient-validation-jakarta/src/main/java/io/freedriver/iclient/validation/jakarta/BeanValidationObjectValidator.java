@@ -2,7 +2,6 @@ package io.freedriver.iclient.validation.jakarta;
 
 import io.freedriver.iclient.validation.api.ObjectValidator;
 import io.freedriver.iclient.validation.api.Violation;
-import jakarta.validation.Validation;
 import jakarta.validation.Validator;
 import java.util.List;
 import java.util.Objects;
@@ -12,7 +11,7 @@ public final class BeanValidationObjectValidator implements ObjectValidator {
     private final Validator validator;
 
     public BeanValidationObjectValidator() {
-        this(Validation.buildDefaultValidatorFactory().getValidator());
+        this(DefaultValidator.INSTANCE);
     }
 
     public BeanValidationObjectValidator(Validator validator) {
