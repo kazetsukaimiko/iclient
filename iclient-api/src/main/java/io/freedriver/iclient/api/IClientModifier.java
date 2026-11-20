@@ -1,4 +1,4 @@
-package io.freedriver.iclient;
+package io.freedriver.iclient.api;
 
 import java.util.stream.Stream;
 

@@ -1,5 +1,6 @@
-package io.freedriver.iclient;
+package io.freedriver.iclient.api;
 
+import io.freedriver.iclient.api.exception.IClientConstructionException;
 /**
  * Builds thread-safe proxies that retain only construction inputs and hold no mutable state.
  * The target must be an interface. Before resolution, expand each supplied modifier once
