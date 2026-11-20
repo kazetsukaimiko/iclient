@@ -1,4 +1,4 @@
-package io.freedriver.iclient;
+package io.freedriver.iclient.api.exception;
 
 /** Failure while constructing a client proxy. */
 public class IClientConstructionException extends Exception {

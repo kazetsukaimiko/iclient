@@ -1,5 +1,6 @@
-package io.freedriver.iclient;
+package io.freedriver.iclient.api;
 
+import io.freedriver.iclient.api.exception.IClientConstructionException;
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
 import java.util.Optional;

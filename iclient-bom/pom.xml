@@ -12,6 +12,11 @@
         <artifactId>iclient-api</artifactId>
         <version>${project.version}</version>
       </dependency>
+      <dependency>
+        <groupId>io.freedriver.iclient</groupId>
+        <artifactId>iclient-http-api</artifactId>
+        <version>${project.version}</version>
+      </dependency>
     </dependencies>
   </dependencyManagement>
 </project>

@@ -1,4 +1,4 @@
-package io.freedriver.iclient;
+package io.freedriver.iclient.api.exception;
 
 /** Failure while invoking a client method. */
 public class IClientCallException extends RuntimeException {
