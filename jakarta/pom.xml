@@ -11,8 +11,13 @@
   <modules>
     <module>iclient-jakarta-bom</module>
     <module>iclient-cdi-jakarta</module>
+    <module>iclient-validation-jakarta</module>
   </modules>
   <properties>
+    <hibernate-validator.version>7.0.5.Final</hibernate-validator.version>
+    <el.group>org.glassfish</el.group>
+    <el.artifact>jakarta.el</el.artifact>
+    <el.version>4.0.2</el.version>
     <cdi.version>3.0.1</cdi.version>
     <weld.version>4.0.3.Final</weld.version>
   </properties>
@@ -30,12 +35,34 @@
         <version>${weld.version}</version>
         <scope>test</scope>
       </dependency>
+      <dependency>
+        <groupId>jakarta.validation</groupId>
+        <artifactId>jakarta.validation-api</artifactId>
+        <version>3.0.2</version>
+        <scope>provided</scope>
+      </dependency>
+      <dependency>
+        <groupId>org.hibernate.validator</groupId>
+        <artifactId>hibernate-validator</artifactId>
+        <version>${hibernate-validator.version}</version>
+        <scope>test</scope>
+      </dependency>
+      <dependency>
+        <groupId>${el.group}</groupId>
+        <artifactId>${el.artifact}</artifactId>
+        <version>${el.version}</version>
+        <scope>test</scope>
+      </dependency>
     </dependencies>
   </dependencyManagement>
   <profiles>
     <profile>
       <id>ee10</id>
       <properties>
+        <hibernate-validator.version>8.0.3.Final</hibernate-validator.version>
+        <el.group>org.glassfish.expressly</el.group>
+        <el.artifact>expressly</el.artifact>
+        <el.version>5.0.0</el.version>
         <cdi.version>4.0.1</cdi.version>
         <weld.version>5.1.7.Final</weld.version>
       </properties>
