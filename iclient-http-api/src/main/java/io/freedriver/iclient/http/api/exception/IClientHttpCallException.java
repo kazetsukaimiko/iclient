@@ -7,6 +7,7 @@ import io.freedriver.iclient.http.api.call.ImmutableHttpRequest;
 import io.freedriver.iclient.http.api.call.ImmutableHttpResponse;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.net.URI;
 
 /** A failed HTTP exchange with a replayable, bounded prefix of the response body. */
 public class IClientHttpCallException extends IClientCallException implements HttpAdvice, RetryAdvice {
@@ -17,7 +18,7 @@ public class IClientHttpCallException extends IClientCallException implements Ht
     private final boolean bodyTruncated;
 
     public IClientHttpCallException(ImmutableHttpRequest request, ImmutableHttpResponse response) {
-        super(request.method() + " " + request.uri() + " -> " + response.statusCode());
+        super(request.method() + " " + displayUri(request.uri()) + " -> " + response.statusCode());
         this.request = request;
         var prefix = new ByteArrayOutputStream();
         boolean truncated = false;
@@ -38,6 +39,23 @@ public class IClientHttpCallException extends IClientCallException implements Ht
         bodyTruncated = truncated;
         var captured = HttpBody.ofBytes(prefix.toByteArray(), response.body().contentType().orElse(null));
         this.response = new ImmutableHttpResponse(response.statusCode(), response.headers(), captured);
+    }
+
+    private static String displayUri(URI uri) {
+        var display = new StringBuilder();
+        if (uri.getScheme() != null) {
+            display.append(uri.getScheme()).append(':');
+        }
+        if (uri.getHost() != null) {
+            display.append("//").append(uri.getHost());
+            if (uri.getPort() >= 0) {
+                display.append(':').append(uri.getPort());
+            }
+        }
+        if (uri.getRawPath() != null) {
+            display.append(uri.getRawPath());
+        }
+        return display.toString();
     }
 
     @Override

@@ -100,6 +100,15 @@ class HttpContractTest {
     }
 
     @Test
+    void errorMessageOmitsUserInfoQueryAndFragment() {
+        var uri = URI.create("https://user:password@example.org:8443/a%2Fb?token=secret#private");
+        var request = new ImmutableHttpRequest("GET", uri, Map.of(), null);
+        var response = new ImmutableHttpResponse(403, Map.of(), null);
+        var failure = new IClientHttpCallException(request, response);
+        assertEquals("GET https://example.org:8443/a%2Fb -> 403", failure.getMessage());
+    }
+
+    @Test
     void exactLimitIsComplete() {
         var response = new ImmutableHttpResponse(400, Map.of(), HttpBody.ofBytes(new byte[LIMIT], null));
         assertFalse(new IClientHttpCallException(REQUEST, response).bodyTruncated());
