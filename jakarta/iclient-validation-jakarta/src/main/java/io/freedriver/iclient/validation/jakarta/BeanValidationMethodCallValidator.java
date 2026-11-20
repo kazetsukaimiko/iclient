@@ -6,6 +6,7 @@ import jakarta.validation.Valid;
 import jakarta.validation.Validator;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 /** Validates cascaded parameters using the interface's declared parameter names when available. */
@@ -35,6 +36,11 @@ public final class BeanValidationMethodCallValidator implements MethodCallValida
             }
         }
         return List.copyOf(failures);
+    }
+
+    @Override
+    public boolean validatesArguments(Method method) {
+        return Arrays.stream(method.getParameters()).anyMatch(parameter -> parameter.isAnnotationPresent(Valid.class));
     }
 
     @Override

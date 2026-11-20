@@ -9,7 +9,6 @@ import io.freedriver.iclient.validation.api.exception.InvalidArgumentsCallExcept
 import io.freedriver.iclient.validation.api.exception.InvalidReturnCallException;
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.util.Arrays;
 import java.util.Optional;
@@ -27,7 +26,7 @@ public final class ValidationLayerFactory implements IClientLayerFactory {
         var objects = single(ObjectValidator.class);
         if (calls == null || objects == null || Arrays.stream(apiClass.getMethods())
                 .filter(method -> !Modifier.isStatic(method.getModifiers()))
-                .noneMatch(method -> markedParameter(method) || calls.validatesReturnValue(method))) {
+                .noneMatch(method -> calls.validatesArguments(method) || calls.validatesReturnValue(method))) {
             return Optional.empty();
         }
         return Optional.of((proxy, method, args) -> {
@@ -58,12 +57,6 @@ public final class ValidationLayerFactory implements IClientLayerFactory {
             }
             return result;
         });
-    }
-
-    private static boolean markedParameter(Method method) {
-        return Arrays.stream(method.getParameterAnnotations()).flatMap(Arrays::stream)
-                .map(annotation -> annotation.annotationType().getName())
-                .anyMatch(name -> name.equals("jakarta.validation.Valid") || name.equals("javax.validation.Valid"));
     }
 
     private static <T> T single(Class<T> service) throws IClientConstructionException {

@@ -63,6 +63,8 @@ public class BeanValidationTest {
         assertEquals(method.getParameters()[0].getName() + ".address.zip", failures.get(0).path());
         assertEquals(NotNull.class.getName(), failures.get(0).constraint());
         assertTrue(calls.validate(method, new Object[]{null, new Request()}).isEmpty());
+        assertTrue(calls.validatesArguments(method));
+        assertFalse(calls.validatesArguments(Client.class.getMethod("plain")));
         assertTrue(calls.validatesReturnValue(method));
         assertFalse(calls.validatesReturnValue(Client.class.getMethod("plain")));
     }

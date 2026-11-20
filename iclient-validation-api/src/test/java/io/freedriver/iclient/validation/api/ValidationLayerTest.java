@@ -16,11 +16,13 @@ import static org.junit.jupiter.api.Assertions.*;
 
 public class ValidationLayerTest {
     public interface Api { String marked(String arg); String plain(); }
+    public interface ArgumentOnly { String input(String arg); }
     public interface Plain { String plain(); }
     public static class Calls implements MethodCallValidator {
         public List<Violation> validate(Method method, Object[] args) {
             return args.length > 0 && args[0] == null ? List.of(new Violation("arg0", "secret", "C")) : List.of();
         }
+        public boolean validatesArguments(Method method) { return method.getName().equals("input"); }
         public boolean validatesReturnValue(Method method) { return method.getName().equals("marked"); }
     }
     public static class OtherCalls extends Calls {}
@@ -50,7 +52,10 @@ public class ValidationLayerTest {
             assertTrue(factory.wrap(Api.class, raw, null).isEmpty());
             register(MethodCallValidator.class, Calls.class);
             register(ObjectValidator.class, Objects.class);
-            assertTrue(factory.wrap(Plain.class, () -> "ok", null).isEmpty());
+            assertTrue(factory.wrap(ArgumentOnly.class, arg -> arg, null).isPresent(),
+                    "argument-only provider selection installs a layer");
+            assertTrue(factory.wrap(Plain.class, () -> "ok", null).isEmpty(),
+                    "neither provider predicate selects a plain method");
             var handler = factory.wrap(Api.class, raw, null).orElseThrow();
             var client = (Api) Proxy.newProxyInstance(loader, new Class<?>[]{Api.class}, handler);
             assertEquals("ok", client.plain());
