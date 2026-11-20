@@ -63,6 +63,32 @@ class HttpContractTest {
         assertArrayEquals(new byte[]{1, 2}, read(body));
     }
 
+    @Test
+    void bufferedViewsAreReadOnlyAndIndependent() throws IOException {
+        var buffered = HttpBody.ofBytes(new byte[]{1, 2}, "image/png");
+        assertTrue(buffered.bytes().isReadOnly());
+        buffered.bytes().get();
+        assertEquals(2, buffered.bytes().remaining());
+        assertEquals(0, HttpBody.empty().bytes().remaining());
+        assertSame(buffered, buffered.buffer(2));
+        assertSame(buffered, buffered.buffer());
+        assertThrows(IOException.class, () -> buffered.buffer(1));
+    }
+
+    @Test
+    void bufferingUsesActualBytesAndSupportsExplicitUnboundedReads() throws IOException {
+        byte[] data = {1, 2, 3};
+        var body = HttpBody.ofStream(() -> new ByteArrayInputStream(data),
+                OptionalLong.empty(), Optional.of("test/type"), true);
+        var bounded = body.buffer(3);
+        assertEquals(body.contentType(), bounded.contentType());
+        assertArrayEquals(data, read(bounded));
+        assertArrayEquals(data, read(body.buffer()));
+        assertArrayEquals(data, read(body.buffer(-1)));
+        assertTrue(assertThrows(IOException.class, () -> body.buffer(2)).getMessage().contains("2"));
+        assertThrows(IllegalArgumentException.class, () -> body.buffer(-2));
+    }
+
     private static byte[] read(HttpBody body) throws IOException {
         try (var stream = body.openStream()) {
             return stream.readAllBytes();
@@ -93,6 +119,7 @@ class HttpContractTest {
         assertTrue(failure.bodyTruncated());
         assertEquals(9, input.available());
         var captured = advice.response().body();
+        assertInstanceOf(HttpBody.FullyBuffered.class, captured);
         assertTrue(captured.repeatable());
         assertEquals(body.contentType(), captured.contentType());
         assertArrayEquals(Arrays.copyOf(bytes, LIMIT), read(captured));
