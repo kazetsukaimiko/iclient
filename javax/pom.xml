@@ -11,8 +11,10 @@
   <modules>
     <module>iclient-javax-bom</module>
     <module>iclient-cdi-javax</module>
+    <module>iclient-validation-javax</module>
   </modules>
   <properties>
+    <hibernate-validator.version>6.2.5.Final</hibernate-validator.version>
     <cdi.version>2.0.SP1</cdi.version>
     <weld.version>3.1.9.Final</weld.version>
   </properties>
@@ -28,6 +30,30 @@
         <groupId>org.jboss.weld.se</groupId>
         <artifactId>weld-se-core</artifactId>
         <version>${weld.version}</version>
+        <scope>test</scope>
+      </dependency>
+      <dependency>
+        <groupId>javax.validation</groupId>
+        <artifactId>validation-api</artifactId>
+        <version>2.0.1.Final</version>
+        <scope>provided</scope>
+      </dependency>
+      <dependency>
+        <groupId>org.hibernate.validator</groupId>
+        <artifactId>hibernate-validator</artifactId>
+        <version>${hibernate-validator.version}</version>
+        <scope>test</scope>
+        <exclusions>
+          <exclusion>
+            <groupId>jakarta.validation</groupId>
+            <artifactId>jakarta.validation-api</artifactId>
+          </exclusion>
+        </exclusions>
+      </dependency>
+      <dependency>
+        <groupId>org.glassfish</groupId>
+        <artifactId>jakarta.el</artifactId>
+        <version>3.0.4</version>
         <scope>test</scope>
       </dependency>
     </dependencies>
@@ -77,6 +103,14 @@
                 <target>
                   <copy todir="${project.build.directory}/generated-test-sources/namespace" overwrite="true">
                     <fileset dir="${jakarta.module}/src/test/java" includes="**/*.java"/>
+                    <filterchain>
+                      <tokenfilter>
+                        <replaceregex pattern="\bjakarta\b" replace="javax" flags="g"/>
+                      </tokenfilter>
+                    </filterchain>
+                  </copy>
+                  <copy todir="${project.build.directory}/test-classes" overwrite="true">
+                    <fileset dir="${jakarta.module}/src/test/resources" includes="META-INF/services/**" erroronmissingdir="false"/>
                     <filterchain>
                       <tokenfilter>
                         <replaceregex pattern="\bjakarta\b" replace="javax" flags="g"/>
