@@ -9,6 +9,7 @@
     <module>iclient-bom</module>
     <module>iclient-api</module>
     <module>iclient-http-api</module>
+    <module>iclient-http-tck</module>
     <module>iclient-validation-api</module>
     <module>jakarta</module>
     <module>javax</module>
