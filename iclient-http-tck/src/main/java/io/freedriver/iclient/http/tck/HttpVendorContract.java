@@ -10,6 +10,7 @@ import io.freedriver.iclient.http.api.call.HttpBody;
 import io.freedriver.iclient.http.api.call.ImmutableHttpRequest;
 import io.freedriver.iclient.http.api.config.HttpClientConfig;
 import io.freedriver.iclient.http.api.exception.IClientHttpCallException;
+import io.freedriver.iclient.http.api.modifiers.ComposingFilter;
 import io.freedriver.iclient.http.api.modifiers.HttpHeadersModifier;
 import io.freedriver.iclient.http.api.modifiers.IClientHttpRequestFilter;
 import java.io.IOException;
@@ -76,14 +77,18 @@ public abstract class HttpVendorContract<P> {
             runs.add("second");
             request.headers().put(ORDER, List.of(request.headers().get(ORDER).get(0) + "-second"));
         };
-        var client = client(first, second);
+        IClientHttpRequestFilter third = (request, call) -> {
+            runs.add("third");
+            request.headers().put(ORDER, List.of(request.headers().get(ORDER).get(0) + "-third"));
+        };
+        var client = client(first, new ComposingFilter().add(second).add(third));
         for (int calls = 1; calls <= 2; calls++) {
             stub(200, Map.of(), new byte[0]);
             call(client);
-            assertEquals(List.of("first-second"), sent().headers().get(ORDER));
-            assertEquals(calls * 2, runs.size());
+            assertEquals(List.of("first-second-third"), sent().headers().get(ORDER));
+            assertEquals(calls * 3, runs.size());
         }
-        assertEquals(List.of("first", "second", "first", "second"), runs);
+        assertEquals(List.of("first", "second", "third", "first", "second", "third"), runs);
     }
 
     @Test

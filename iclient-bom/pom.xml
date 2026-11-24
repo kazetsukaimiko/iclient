@@ -18,7 +18,7 @@
         <version>${project.version}</version>
       </dependency>
       <dependency>
-        <groupId>io.freedriver</groupId>
+        <groupId>io.freedriver.iclient</groupId>
         <artifactId>iclient-http-tck</artifactId>
         <version>${project.version}</version>
       </dependency>
