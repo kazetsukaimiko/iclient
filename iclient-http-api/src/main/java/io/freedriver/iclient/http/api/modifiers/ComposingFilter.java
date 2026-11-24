@@ -26,19 +26,23 @@ public final class ComposingFilter implements IClientHttpRequestFilter {
         this.filters = filters;
     }
 
-    /** Composes the stream's filters in encounter order. */
+    /** Composes the stream's filters in encounter order. A null element is rejected, as in {@link #add}. */
     public static ComposingFilter of(Stream<? extends IClientHttpRequestFilter> filters) {
-        return new ComposingFilter(filters.<IClientHttpRequestFilter>map(filter -> filter).toList());
+        return new ComposingFilter(filters.<IClientHttpRequestFilter>map(ComposingFilter::required).toList());
     }
 
     /** A new filter that runs this one's filters, then {@code next}. */
     public ComposingFilter add(IClientHttpRequestFilter next) {
-        if (next == null) {
+        var copy = new ArrayList<>(filters);
+        copy.add(required(next));
+        return new ComposingFilter(List.copyOf(copy));
+    }
+
+    private static IClientHttpRequestFilter required(IClientHttpRequestFilter filter) {
+        if (filter == null) {
             throw new IllegalArgumentException("Filter is required");
         }
-        var copy = new ArrayList<>(filters);
-        copy.add(next);
-        return new ComposingFilter(List.copyOf(copy));
+        return filter;
     }
 
     @Override

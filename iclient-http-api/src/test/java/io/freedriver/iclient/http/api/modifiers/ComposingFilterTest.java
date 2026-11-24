@@ -31,6 +31,7 @@ class ComposingFilterTest {
         two.filter(new MutableHttpRequest(), null);
         assertEquals(List.of("a", "a", "b"), runs);
         assertThrows(IllegalArgumentException.class, () -> empty.add(null));
+        assertThrows(IllegalArgumentException.class, () -> ComposingFilter.of(Stream.of(named("a"), null)));
     }
 
     @Test
