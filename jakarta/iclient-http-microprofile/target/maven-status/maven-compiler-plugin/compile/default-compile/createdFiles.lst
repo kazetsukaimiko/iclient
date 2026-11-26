@@ -1,7 +1,0 @@
-io/freedriver/iclient/http/impl/microprofile/RequestFilterAdapter.class
-io/freedriver/iclient/http/impl/microprofile/CallState.class
-module-info.class
-io/freedriver/iclient/http/impl/microprofile/HttpStatusMapper.class
-io/freedriver/iclient/http/impl/microprofile/MicroProfileClient.class
-io/freedriver/iclient/http/impl/microprofile/HttpStatusMapper$UnattachedHttpFailure.class
-io/freedriver/iclient/http/impl/microprofile/MicroProfileHttpVendor.class
