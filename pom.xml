@@ -84,4 +84,12 @@
       </plugin>
     </plugins>
   </build>
+  <!-- Reference only. The publish passes altDeploymentRepository, which also reaches the parentless BOMs. -->
+  <distributionManagement>
+    <repository>
+      <id>github</id>
+      <name>GitHub Packages</name>
+      <url>https://maven.pkg.github.com/kazetsukaimiko/iclient</url>
+    </repository>
+  </distributionManagement>
 </project>

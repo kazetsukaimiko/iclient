@@ -20,3 +20,22 @@ jobs:
           cache: maven
       - run: ./mvnw -B verify
       - run: ./mvnw -B verify -Pee10 -pl jakarta/iclient-cdi-jakarta,jakarta/iclient-validation-jakarta,jakarta/iclient-http-microprofile -am
+
+  release-check:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+          cache: maven
+      - name: Release check unit tests
+        working-directory: .github/release
+        run: python3 -m unittest check_release_test
+      - name: Credential-free publish check
+        env:
+          TAG: "0.1.0"
+        run: bash .github/release/check_local_publish.sh
