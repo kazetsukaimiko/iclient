@@ -1,0 +1,8 @@
+--add-modules
+jdk.httpserver
+--add-reads
+io.freedriver.iclient.http.microprofile=jdk.httpserver
+--patch-module
+io.freedriver.iclient.http.microprofile=_
+--add-reads
+io.freedriver.iclient.http.microprofile=ALL-UNNAMED

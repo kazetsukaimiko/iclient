@@ -19,4 +19,4 @@ jobs:
           java-version: ${{ matrix.java }}
           cache: maven
       - run: ./mvnw -B verify
-      - run: ./mvnw -B verify -Pee10 -pl jakarta/iclient-cdi-jakarta,jakarta/iclient-validation-jakarta -am
+      - run: ./mvnw -B verify -Pee10 -pl jakarta/iclient-cdi-jakarta,jakarta/iclient-validation-jakarta,jakarta/iclient-http-microprofile -am
